@@ -401,6 +401,7 @@ CONTAINS
          t2 = m_walltime()
          IF (iter .EQ. 1 .OR. MOD(iter, 1) .EQ. 0 .OR. linres_control%converged &
              .OR. restart .OR. should_stop) THEN
+            if(norm_res.ne.norm_res)CPABORT(" Linres blew up")!REC
             IF (iounit > 0) THEN
                WRITE (iounit, "(T5,I5,T18,A3,T28,L1,T38,1E8.2,T48,F16.10,T68,F8.2)") &
                   iter, linres_control%flag, restart, alpha, norm_res, t2 - t1
@@ -445,11 +446,14 @@ CONTAINS
          END DO
          !
          ! alpha = tr(r_j*z_j) / tr(Ap_j*p_j)
-         IF (SUM(tr_pAp) < 1.0e-10_dp) THEN
-            alpha = 1.0_dp
-         ELSE
-            alpha = SUM(tr_rz0)/SUM(tr_pAp)
-         END IF
+! REC
+!         IF (SUM(tr_pAp) < 1.0e-10_dp) THEN
+!            alpha = 1.0_dp
+!         ELSE
+!            alpha = SUM(tr_rz0)/SUM(tr_pAp)
+!         END IF
+         alpha = (MIN(SUM(tr_rz0)/(SUM(tr_pAp)+1e-6),1.0_dp))
+! REC
          DO ispin = 1, nspins
             !
             ! x_j+1 = x_j + alpha * p_j

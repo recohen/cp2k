@@ -14,6 +14,7 @@
 !>      08.2013 created [Mauro Del Ben]
 !> \author Mauro Del Ben
 ! **************************************************************************************************
+
 MODULE mp2_optimize_ri_basis
    USE atomic_kind_types,               ONLY: atomic_kind_type
    USE basis_set_container_types,       ONLY: add_basis_set_to_container,&
@@ -281,7 +282,7 @@ CONTAINS
 
       ! check if the max angular momentum exceed the libint one
       IF (max_l_am > build_eri_size) THEN
-         CPABORT("The angular momentum needed exceeds the value assumed when configuring libint.")
+       !CPABORT("The angular momentum exceeds the value assumed when configuring libint.")
       END IF
 
       ! Allocate stuff
