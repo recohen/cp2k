@@ -387,7 +387,8 @@ CONTAINS
       END DO
       IF (SUM(tr_rz0) < 0.0_dp) CPABORT("tr(r_j*z_j) < 0")
       !
-      alpha = 0.0_dp      restart = .FALSE.
+      alpha = 0.0_dp      
+      restart = .FALSE.
       should_stop = .FALSE.
       norm_resm1 = norm_res
       norm_res = ABS(SUM(tr_rz0))/SQRT(REAL(nspins*nao*maxnmo_o, dp))
