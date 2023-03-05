@@ -448,9 +448,8 @@ CONTAINS
          END DO
          !
          ! alpha = tr(r_j*z_j) / tr(Ap_j*p_j)
-         factor = 0.5d0
+         factor = 1.0d0
 ! inner loop to backtrack, allow 10 times
-         norm_resm1=norm_res
          IF (SUM(tr_pAp) < 1.0e-10_dp) THEN
             alpha = 1.0_dp
          ELSE
@@ -523,6 +522,7 @@ CONTAINS
                CALL cp_fm_trace(r(ispin), z(ispin), tr_rz1(ispin))
             END DO
             IF (SUM(tr_rz1) < 0.0_dp) CPABORT("tr(r_j+1*z_j+1) < 0")
+            norm_resm1=norm_res
             norm_res = SUM(tr_rz1)/SQRT(REAL(nspins*nao*maxnmo_o, dp))
             if(norm_res < norm_resm1) exit
             factor=0.5d0*factor
