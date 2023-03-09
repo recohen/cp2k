@@ -242,7 +242,6 @@ CONTAINS
       NULLIFY (mos, tmp_fm_struct, mo_coeff)
 
       t1 = m_walltime()
-      norm_res = 1d10
       CALL get_qs_env(qs_env=qs_env, &
                       matrix_ks=matrix_ks, &
                       matrix_s=matrix_s, &
@@ -385,8 +384,8 @@ CONTAINS
          CALL cp_fm_trace(r(ispin), z(ispin), tr_rz0(ispin))
       END DO
       IF (SUM(tr_rz0) < 0.0_dp) CPABORT("tr(r_j*z_j) < 0")
-      norm_resm1 = norm_res
       norm_res = ABS(SUM(tr_rz0))/SQRT(REAL(nspins*nao*maxnmo_o, dp))
+      norm_resm1=norm_res
       !
       alpha = 0.0_dp
       restart = .FALSE.
@@ -455,7 +454,7 @@ CONTAINS
          ELSE
             alpha = SUM(tr_rz0)/SUM(tr_pAp)
          END IF
-         do iback=1,10
+         DO iback=1, 10
             alpha=alpha*factor ! REC
             DO ispin = 1, nspins
             !
@@ -522,15 +521,15 @@ CONTAINS
                CALL cp_fm_trace(r(ispin), z(ispin), tr_rz1(ispin))
             END DO
             IF (SUM(tr_rz1) < 0.0_dp) CPABORT("tr(r_j+1*z_j+1) < 0")
-            norm_resm1=norm_res
             norm_res = SUM(tr_rz1)/SQRT(REAL(nspins*nao*maxnmo_o, dp))
-            if(norm_res < norm_resm1) exit
+            if(norm_res <= norm_resm1) exit
             factor=0.5d0*factor
             DO ispin = 1, nspins
                CALL cp_fm_to_fm(p0(ispin), psi1(ispin))
             END DO
             IF (iounit > 0)write(iounit,'(i3,3e15.5)')iback,factor,norm_resm1,norm_res
          END DO
+         norm_resm1=norm_res
          !
          ! beta = tr(r_j+1*z_j+1) / tr(r_j*z_j)
          IF (SUM(tr_rz0) < 1.0e-10_dp) THEN
